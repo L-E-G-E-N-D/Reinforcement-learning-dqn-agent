@@ -72,11 +72,11 @@ for episode in range(episodes):
             dones = torch.FloatTensor(dones)
 
             q_values = model(states)
+            
+            next_actions = torch.argmax(model(next_states), dim=1)         
             next_q_values = target_model(next_states)
-
+            next_q_value = next_q_values.gather(1, next_actions.unsqueeze(1)).squeeze(1)
             q_value = q_values.gather(1, actions.unsqueeze(1)).squeeze(1)
-            next_q_value = next_q_values.max(1)[0]
-
             expected_q = rewards_b + gamma * next_q_value * (1 - dones)
 
             loss = torch.nn.functional.mse_loss(q_value, expected_q.detach())
