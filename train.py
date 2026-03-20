@@ -24,12 +24,12 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 buffer = ReplayBuffer(10000)
 
-episodes = 500
+episodes = 1000
 batch_size = 64
 gamma = 0.99
 
 epsilon = 1.0
-epsilon_decay = 0.995
+epsilon_decay = 0.997
 epsilon_min = 0.01
 
 rewards = []
