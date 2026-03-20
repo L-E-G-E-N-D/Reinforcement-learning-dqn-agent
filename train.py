@@ -30,6 +30,9 @@ epsilon_min = 0.01
 
 rewards = []
 
+def moving_average(data, window_size=20):
+    return np.convolve(data, np.ones(window_size)/window_size, mode='valid')
+
 for episode in range(episodes):
 
     state, _ = env.reset()
@@ -84,10 +87,16 @@ for episode in range(episodes):
 
     print(f"Episode {episode}, Reward: {total_reward}")
 
-    plt.plot(rewards)
+plt.plot(rewards, label="Raw Rewards")
+
+ma_rewards = moving_average(rewards)
+plt.plot(range(len(ma_rewards)), ma_rewards, label="Moving Average", linewidth=2)
+
 plt.xlabel("Episode")
 plt.ylabel("Reward")
 plt.title("Training Reward Curve")
+
+plt.legend()
 
 plt.savefig("training_results.png")
 torch.save(model.state_dict(), "dqn_cartpole.pth")
