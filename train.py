@@ -16,6 +16,10 @@ print("Action dim:", action_dim)
 
 model = DQN(state_dim, action_dim)
 
+target_model = DQN(state_dim, action_dim)
+target_model.load_state_dict(model.state_dict())
+target_model.eval()
+
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 buffer = ReplayBuffer(10000)
@@ -35,6 +39,8 @@ def moving_average(data, window_size=20):
 
 best_reward = 0
 
+target_update_freq = 10
+
 for episode in range(episodes):
 
     state, _ = env.reset()
@@ -43,7 +49,6 @@ for episode in range(episodes):
 
     while not done:
 
-        # epsilon-greedy action
         if np.random.rand() < epsilon:
             action = env.action_space.sample()
         else:
@@ -67,7 +72,7 @@ for episode in range(episodes):
             dones = torch.FloatTensor(dones)
 
             q_values = model(states)
-            next_q_values = model(next_states)
+            next_q_values = target_model(next_states)
 
             q_value = q_values.gather(1, actions.unsqueeze(1)).squeeze(1)
             next_q_value = next_q_values.max(1)[0]
@@ -82,13 +87,17 @@ for episode in range(episodes):
 
         state = next_state
         total_reward += reward
-        if total_reward > best_reward:
-            best_reward = total_reward
-            torch.save(model.state_dict(), "best_dqn_cartpole.pth")
+
     
     epsilon = max(epsilon * epsilon_decay, epsilon_min)
 
+    if episode % target_update_freq == 0:
+        target_model.load_state_dict(model.state_dict())
+
     rewards.append(total_reward)
+    if total_reward > best_reward:
+        best_reward = total_reward
+        torch.save(model.state_dict(), "best_dqn_cartpole.pth")
 
     print(f"Episode {episode}, Reward: {total_reward}")
 
