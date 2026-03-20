@@ -8,7 +8,7 @@ from model import DQN
 env = gym.make("CartPole-v1", render_mode="human")
 
 model = DQN(4, 2)
-model.load_state_dict(torch.load("dqn_cartpole.pth"))
+model.load_state_dict(torch.load("best_dqn_cartpole.pth"))
 
 model.eval()
 

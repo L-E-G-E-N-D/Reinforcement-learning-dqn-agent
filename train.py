@@ -33,6 +33,8 @@ rewards = []
 def moving_average(data, window_size=20):
     return np.convolve(data, np.ones(window_size)/window_size, mode='valid')
 
+best_reward = 0
+
 for episode in range(episodes):
 
     state, _ = env.reset()
@@ -80,6 +82,9 @@ for episode in range(episodes):
 
         state = next_state
         total_reward += reward
+        if total_reward > best_reward:
+            best_reward = total_reward
+            torch.save(model.state_dict(), "best_dqn_cartpole.pth")
     
     epsilon = max(epsilon * epsilon_decay, epsilon_min)
 
