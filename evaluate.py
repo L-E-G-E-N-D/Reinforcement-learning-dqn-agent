@@ -5,7 +5,9 @@ import time
 
 from model import DQN
 
-env = gym.make("CartPole-v1", render_mode="human")
+# Run evaluation headlessly by default. If you want on-screen rendering,
+# install pygame and change this to render_mode="human".
+env = gym.make("CartPole-v1")
 
 model = DQN(4, 2)
 model.load_state_dict(torch.load("best_dqn_cartpole.pth"))

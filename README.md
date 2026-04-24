@@ -92,6 +92,10 @@ python train.py
 python evaluate.py
 ```
 
+> If you want to see the CartPole window during evaluation, install the classic control extras:
+> `pip install "gymnasium[classic-control]"`
+> or make sure `pygame` is available in your environment.
+
 ---
 
 ## Key Learnings
